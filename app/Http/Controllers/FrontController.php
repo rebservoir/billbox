@@ -54,7 +54,7 @@ class FrontController extends Controller
         $sites = Sites_users::where('id_user', $id_user)->get();
 
         if( ($sites->count())>1){
-            $sitios = DB::select('select sites.* FROM sites JOIN sites_users ON sites_users.id_user = :id_user AND sites.id = sites_users.id_site', ['id_user' => $id_user]);
+            $sitios = DB::select('select sites.* FROM sites INNER JOIN sites_users ON sites_users.id_user = :id_user AND sites.id = sites_users.id_site', ['id_user' => $id_user]);
             return view('sites', [ 'sitios' => $sitios ]);
         }else{
             $id_site = Sites_users::where('id_user', $id_user)->value('id_site');
@@ -67,9 +67,12 @@ class FrontController extends Controller
         $id_user = $this->auth->user()->id;
         $is_site = Sites_users::where('id_user', $id_user)->where('id_site',$id_site)->count();
         
-        \Session::put('id_site', $id_site );
-        return redirect()->to('home');
-        
+        if($is_site==0){
+            return redirect()->to('home');
+        }else{
+            \Session::put('id_site', $id_site );
+            return redirect()->to('home');
+        }
     }
 
     public function index()
@@ -78,15 +81,17 @@ class FrontController extends Controller
         $id_user = $this->auth->user()->id;
         $user_role = Sites_users::where('id_site',$id_site)->where('id_user',$id_user)->value('role');
         
-        if($user_role === 0){
-            $users =DB::select('select users.name FROM users JOIN sites_users ON sites_users.id_user = users.id WHERE sites_users.role = 0 AND sites_users.status = 0 AND sites_users.id_site = :id_site ORDER BY users.name', ['id_site' => $id_site]);
+
+        if($user_role == 0){
+            $users = DB::select('select users.name FROM users JOIN sites_users ON sites_users.id_user = users.id WHERE sites_users.role = 0 AND sites_users.status = 0 AND sites_users.id_site = :id_site ORDER BY users.name', ['id_site' => $id_site]);
             $noticias = Noticia::where('id_site', $id_site)->orderBy('created_at','desc')->take(2)->get();
             $sitios = Sites::where('id', $id_site)->get();
             $sites = Sites_users::where('id_user', $id_user)->count();
             return view('index', ['users' => $users, 'noticias' => $noticias, 'sitios' => $sitios, 'sites' => $sites ]);
-        }else if($user_role === 1){
+        }else if($user_role == 1){
             return redirect()->to('/admin/home');
         }
+        
     }
 
     public function login()
@@ -129,18 +134,13 @@ class FrontController extends Controller
         $ultimo_p = DB::table('pagos')->where('id_user', $id_user)->where('status', 1)->where('id_site', $id_site)->orderBy('date', 'dsc')->get();
         $vencidos = DB::table('pagos')->where('id_user', $id_user)->where('status', 0)->where('id_site', $id_site)->orderBy('date', 'asc')->get();
         
-        $user = User::find($id_user);
-        $cuotas = Cuotas::find($user->type);
-
-        if(empty($cuota)){
-            $cuota = 0;
-        }else{
-            $cuota = $cuotas->amount;  
-        }
+        $user_type = Sites_users::where('id_site',$id_site)->where('id_user',$id_user)->value('type');
+        $cuota = Cuotas::find($user_type);
+        $cuota = $cuota->amount;
 
         $sites = Sites_users::where('id_user', $id_user)->count();
         
-        return view('cuenta', ['vencidos' => $vencidos,'pagos' => $pagos, 'cuotas' => $cuotas,
+        return view('cuenta', ['vencidos' => $vencidos,'pagos' => $pagos, 
                                 'sitios' => $sitios, 'ultimo_p' => $ultimo_p, 'cuota' => $cuota, 'sites' => $sites]);
     }
 
@@ -218,7 +218,7 @@ class FrontController extends Controller
         $sites = Sites_users::where('id_user', $id_user)->count();
         $user_role = Sites_users::where('id_site',$id_site)->where('id_user',$id_user)->value('role');
         
-        if($user_role === 1){
+        if($user_role == 1){
                 $users =DB::select('select users.name FROM users JOIN sites_users ON sites_users.id_user = users.id WHERE sites_users.role = 0 AND sites_users.status = 0 AND sites_users.id_site = :id_site ORDER BY users.name', ['id_site' => $id_site]);
                 $sitios = Sites::where('id', $id_site)->get();
                 $noticias = Noticia::where('id_site', $id_site)->orderBy('created_at','desc')->take(2)->get();
@@ -235,7 +235,7 @@ class FrontController extends Controller
         $user_role = Sites_users::where('id_site',$id_site)->where('id_user',$id_user)->value('role');
         $sites = Sites_users::where('id_user', $id_user)->count();
 
-        if($user_role === 1){
+        if($user_role == 1){
             $id_site = \Session::get('id_site');
             $sitios = Sites::where('id', $id_site)->get();
             $sitio_plan = DB::table('sites')->where('id', $id_site )->value('plan');

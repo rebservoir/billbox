@@ -23,23 +23,17 @@
 		<div id="login_box">
 			<p><img src="img/logo_tu.jpg" alt="logotipo"></p>
 
-				<form method="POST" action="/auth/login">
-				    {!! csrf_field() !!}
-
-				    <div class="form-group">
-				        <label>Email</label><br>
-				        <input type="email" class="form-control" placeholder="Ingresa tu Email" name="email" value="{{ old('email') }}">
-				    </div>
-
-				    <div class="form-group">
-				        <label>Contraseña</label><br>
-				        <input type="password" class="form-control" placeholder="Ingresa tu Contraseña" name="password" id="password">
-				    </div>
-
-				    <div>
-				        <button type="submit" class="btn btn-primary">Entrar</button>
-				    </div>
-				</form>
+			{!!Form::open(['route'=>'log.store', 'method'=>'POST'])!!}
+				<div class="form-group">
+					{!!Form::label('Email:')!!}
+					{!!Form::email('email',null, ['class'=>'form-control', 'placeholder'=>'Ingresa tu Email'])!!}
+				</div>
+				<div class="form-group">
+					{!!Form::label('Contraseña','Contraseña:')!!}
+					{!!Form::password('password',['class'=>'form-control', 'placeholder'=>'Ingresa tu contraseña'])!!}
+				</div>
+				{!!Form::submit('Login',['id'=>'submit_btn', 'class'=>'btn btn-primary'])!!}
+			{!!Form::close()!!}
 
 			<br>
 
