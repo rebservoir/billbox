@@ -54,7 +54,7 @@ class FrontController extends Controller
         $sites = Sites_users::where('id_user', $id_user)->get();
 
         if( ($sites->count())>1){
-            $sitios = DB::select('select sites.* FROM sites INNER JOIN sites_users ON sites_users.id_user = :id_user AND sites.id = sites_users.id_site', ['id_user' => $id_user]);
+            $sitios = DB::select('select sites.* FROM sites JOIN sites_users ON sites_users.id_user = :id_user AND sites.id = sites_users.id_site', ['id_user' => $id_user]);
             return view('sites', [ 'sitios' => $sitios ]);
         }else{
             $id_site = Sites_users::where('id_user', $id_user)->value('id_site');
@@ -67,12 +67,9 @@ class FrontController extends Controller
         $id_user = $this->auth->user()->id;
         $is_site = Sites_users::where('id_user', $id_user)->where('id_site',$id_site)->count();
         
-        if($is_site==0){
-            return redirect()->to('home');
-        }else{
-            \Session::put('id_site', $id_site );
-            return redirect()->to('home');
-        }
+        \Session::put('id_site', $id_site );
+        return redirect()->to('home');
+        
     }
 
     public function index()

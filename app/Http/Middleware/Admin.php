@@ -26,8 +26,8 @@ class Admin
         $id_user = $this->auth->user()->id;
         $user_role = Sites_users::where('id_site',$id_site)->where('id_user',$id_user)->value('role');
 
-        if($user_role != 1){
-            return redirect()->to('/home');
+        if($user_role !== 1){
+            return redirect()->to('home');
         }
 
         return $next($request);
