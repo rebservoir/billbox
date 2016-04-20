@@ -96,7 +96,6 @@ class PaypalController extends BaseController
 
 		$this->_api_context = new ApiContext(new OAuthTokenCredential($paypal_conf['client_id'], $paypal_conf['secret']));
 		$this->_api_context->setConfig($paypal_conf['settings']);
-
 		$this->auth = $auth;
 	}
 
@@ -111,11 +110,12 @@ public function postPayment($type){
 		$pagos_data = \Session::get('pagos_data');
 		//\Session::put('pagos_data', $pagos_data);
 
+		$id_site = \Session::get('id_site');
 		$user_id = $this->auth->user()->id;
 		$month = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
 
-		$cta = $this->auth->user()->type;
-		$cuota = Cuotas::find($cta);
+		$user_type = Sites_users::where('id_site',$id_site)->where('id_user',$id_user)->value('type');
+        $cuota = Cuotas::find($user_type);
 
 		$payer = new Payer();
 		$payer->setPaymentMethod('paypal');
@@ -139,7 +139,7 @@ public function postPayment($type){
 		$d=date('d');
 
 
-		$ultimo_p = DB::table('pagos')->where('id_user', $this->auth->user()->id)->where('status', 1)->orderBy('date', 'dsc')->get();
+		$ultimo_p = DB::table('pagos')->where('id_user', $user_id)->where('id_site', $id_site)->where('status', 1)->orderBy('date', 'dsc')->get();
 
 		foreach ($ultimo_p as $pay) {
 			$pago_hasta = explode("-", $pay->date); 
@@ -166,7 +166,7 @@ public function postPayment($type){
 			$lmt=12;
 			$descuento=true;		
 		}else if ($type==4){
-			$vencidos = DB::table('pagos')->where('id_user', $this->auth->user()->id)->where('status', 0)->orderBy('date', 'asc')->get();
+			$vencidos = DB::table('pagos')->where('id_user', $user_id)->where('id_site', $id_site)->where('status', 0)->orderBy('date', 'asc')->get();
 			$vence_date = explode("-", $vencidos[0]->date);
 			$m=intval($vence_date[1]);
 			$y=intval($vence_date[0]);
@@ -327,21 +327,24 @@ public function postPayment($type){
 
 			$pagos_id = \Session::get('pagos_id');
 			$pagos_data = \Session::get('pagos_data');
+			$id_site = \Session::get('id_site');
 			$message = 'Su pago ha sido registrado. Gracias.';
 
-			if(!empty($pagos_id)) {
+			if(!empty($pagos_id)){
 				foreach ($pagos_id as $pago) {
 					DB::table('pagos')->where('id', $pago)->update(['status' => 1]);
-					DB::table('users')->where('id',$this->auth->user()->id)->update(['status' => 1]);
+					DB::table('sites_users')->where('id_user',$this->auth->user()->id)->where('id_user', $id_site )->update(['status' => 1]);
 				}
 			}else if(!empty($pagos_data)){
 				
-				$user = User::find($this->auth->user()->id);
-				$cuota = Cuotas::find($user->type);
+				$user_type = Sites_users::where('id_site',$id_site)->where('id_user', $this->auth->user()->id)->value('type');
+        		$cuota = Cuotas::find($user_type);
+        		$user = User::find($this->auth->user()->id);
 
 				foreach ($pagos_data as $date) {
 					DB::table('pagos')->insert([
 						'id_user' => $user->id,
+						'id_site' => $id_site,
 						'date' => $date,
 						'status' => 1,
 						'amount' => $cuota->amount,

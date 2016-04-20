@@ -85,9 +85,9 @@ class NoticiaController extends Controller
         $noti_show = Noticia::where('id', $id)->get();
         $sitios = Sites::where('id', $id_site)->get();
         $sites = Sites_users::where('id_user', $id_user)->count();
-        
+        $user_role = Sites_users::where('id_site',$id_site)->where('id_user',$id_user)->value('role');
 
-        if($this->auth->user()->role == 1){
+        if($user_role == 1){
             return view('admin.noticia.show',['noti_show'=>$noti_show, 'sitios' => $sitios, 'sites' => $sites]);    
         }else{
             return view('noticia.show',['noti_show'=>$noti_show, 'sitios' => $sitios, 'sites' => $sites]);   
