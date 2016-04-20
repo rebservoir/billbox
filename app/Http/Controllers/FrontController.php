@@ -105,6 +105,7 @@ class FrontController extends Controller
         $id_user = $this->auth->user()->id;
         $user_role = Sites_users::where('id_site',$id_site)->where('id_user',$id_user)->value('role');
         $sitios = Sites::where('id', $id_site)->get();
+        $sites = Sites_users::where('id_user', $id_user)->count();
         $noticias = Noticia::where('id_site', $id_site )->orderBy('created_at', 'desc')->paginate(5);
 
         if($user_role != 1){
@@ -112,10 +113,10 @@ class FrontController extends Controller
             if($request->ajax()){
             return view('noticia.noticias', ['noticias' => $noticias, 'sitios' => $sitios]);
             }
-            return view('noticias', ['noticias' => $noticias, 'sitios' => $sitios]);
+            return view('noticias', ['noticias' => $noticias, 'sitios' => $sitios, 'sites' => $sites]);
         }else{
             $noticias->setPath('/admin/noticias');
-            return view('admin.noticias', ['noticias' => $noticias, 'sitios' => $sitios]);
+            return view('admin.noticias', ['noticias' => $noticias, 'sitios' => $sitios, 'sites' => $sites]);
         }
     }
 

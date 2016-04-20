@@ -9,6 +9,7 @@ use TuFracc\Http\Requests\NoticiaUpdateRequest;
 use TuFracc\Http\Controllers\Controller;
 use TuFracc\Noticia;
 use TuFracc\Sites;
+use TuFracc\Sites_users;
 use Illuminate\Contracts\Auth\Guard;
 use Session;
 use Redirect;
@@ -80,13 +81,16 @@ class NoticiaController extends Controller
     public function show($id)
     {
         $id_site = \Session::get('id_site');
+        $id_user = $this->auth->user()->id;
         $noti_show = Noticia::where('id', $id)->get();
         $sitios = Sites::where('id', $id_site)->get();
+        $sites = Sites_users::where('id_user', $id_user)->count();
+        
 
         if($this->auth->user()->role == 1){
-            return view('admin.noticia.show',['noti_show'=>$noti_show, 'sitios' => $sitios]);    
+            return view('admin.noticia.show',['noti_show'=>$noti_show, 'sitios' => $sitios, 'sites' => $sites]);    
         }else{
-            return view('noticia.show',['noti_show'=>$noti_show, 'sitios' => $sitios]);   
+            return view('noticia.show',['noti_show'=>$noti_show, 'sitios' => $sitios, 'sites' => $sites]);   
         }
     }
 
