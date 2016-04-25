@@ -12,16 +12,18 @@
 				<input type="hidden" name="_token" value="{{ csrf_token() }}" id="token_cuota">
 				<input type="hidden" id="id_cuota">
 				<div class="form-group">
-					{!!Form::label('Concepto:')!!}
+					{!!Form::label('*Concepto:')!!}
 					{!!Form::text('concept',null,['id'=>'concept_cuota','class'=>'form-control','placeholder'=>'Ingresar concepto'])!!}
 				</div>
 				<div class="form-group">
-					{!!Form::label('Monto:')!!}
+					{!!Form::label('*Monto:')!!}
 					{!!Form::text('monto',null,['id'=>'monto_cuota','class'=>'form-control','placeholder'=>'Ingresar monto'])!!}
 				</div>
 			</div>
 
 				<div class="modal-footer">
+					<div class="requeridos"><p>* Campos requeridos.</p></div>
+
 					<div class="btn_go">
 						{!!link_to('#', $title='Registrar', $attributes = ['id'=>'registrar_cuota', 'class'=>'btn btn-primary'], $secure=null)!!}
 					</div>

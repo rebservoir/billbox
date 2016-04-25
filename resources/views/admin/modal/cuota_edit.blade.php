@@ -12,16 +12,17 @@
 				<input type="hidden" name="_token_cuota" value="{{ csrf_token() }}" id="token_cuota1">
 				<input type="hidden" id="id_cuota1">
 				<div class="form-group">
-					{!!Form::label('Concepto:')!!}
+					{!!Form::label('*Concepto:')!!}
 					{!!Form::text('concept',null,['id'=>'concept_cuota1','class'=>'form-control','placeholder'=>'Ingresar concepto'])!!}
 				</div>
 				<div class="form-group">
-					{!!Form::label('Monto:')!!}
+					{!!Form::label('*Monto:')!!}
 					{!!Form::text('monto',null,['id'=>'monto_cuota1','class'=>'form-control','placeholder'=>'Ingresar monto'])!!}
 				</div>
 		
 			</div>
 			<div class="modal-footer">
+				<div class="requeridos"><p>*Campos requeridos.</p></div>
 				<div class="btn_go">
 					<div id="btns_delete_cuota">
 						{!!link_to('#', $title='Modificar Cuota', $attributes = ['id'=>'actualizar_cuota', 'class'=>'btn btn-primary'], $secure=null)!!}

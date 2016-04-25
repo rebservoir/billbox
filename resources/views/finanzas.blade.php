@@ -271,6 +271,8 @@ $month = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
 						<h4>Total de Egresos en el Mes</h4>
 						<h3>{{'$ '.$money}}</h3>
 					</td>
+				</tr>
+				<tr> 
 							{{--*/ $money = number_format(($total_ingresos - $total_egresos), 2) /*--}}
 					<td class="cifras2 saldo">	
 						<h4>Saldo</h4>

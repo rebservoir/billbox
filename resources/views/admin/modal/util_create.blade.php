@@ -11,7 +11,7 @@
 			<div class="modal-body">
 				<input type="hidden" name="_token" value="{{ csrf_token() }}" id="token1">
 				<div class="form-group">
-					{!!Form::label('Concepto:')!!}
+					{!!Form::label('*Concepto:')!!}
 					{!!Form::text('concept',null,['id'=>'concept1','class'=>'form-control','placeholder'=>'Ingresar concepto'])!!}
 				</div>
 				<div class="form-group">
@@ -27,11 +27,12 @@
 					{!!Form::text('url',null,['id'=>'url1','class'=>'form-control','placeholder'=>'Ingresar URL'])!!}
 				</div>
 				<div class="form-group">
-					{!!Form::label('Categoria:')!!}
+					{!!Form::label('*Categoria:')!!}
 					{!!Form::select('category', ['Emergencias', 'Mi Sitio', 'Tintorerias', 'Taxi', 'Farmacias', 'Gruas', 'Ferreterias', 'Otros'],null,['id'=>'category1'])!!}
 				</div>
 			</div>
 				<div class="modal-footer">
+					<div class="requeridos"><p>*Campos requeridos.</p></div>
 					<div class="btn_go">
 						{!!link_to('#', $title='Registrar', $attributes = ['id'=>'registrar', 'class'=>'btn btn-primary'], $secure=null)!!}
 					</div>

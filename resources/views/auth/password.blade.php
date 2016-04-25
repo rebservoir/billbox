@@ -42,7 +42,7 @@
                     <div class="form-group">
                         <label>Email</label>
                         <br>
-                        <input type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder = 'Ingresa tu Email'>
+                        <input type="email" id="email" class="form-control" name="email" value="{{ old('email') }}" placeholder = 'Ingresa tu Email'>
                     </div>
 
                     <div>

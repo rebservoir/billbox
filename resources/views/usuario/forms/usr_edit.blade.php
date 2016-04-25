@@ -20,12 +20,12 @@
 			{!!Form::label('Celular:')!!}
 			{!!Form::text('celphone',null,['id'=>'cel1','class'=>'form-control','placeholder'=>'Ingresar direccion'])!!}
 		</div>
-			<div class="type_msg">
-			</div>
+			<div class="type_msg"></div>
 		<div class="form-group">
 			{!!Form::label('*Cuota:')!!}
 			{!!Form::select('type', $tipos , null ,['id'=>'type1', 'placeholder'=>'Seleccionar opción', 'required' ])!!}
 		</div>
+			<div class="role_msg"></div>
 		<div class="form-group">
 			{!!Form::label('*Rol:')!!}
 			{!!Form::select('role', ['Residente', 'Administrador'],null,['id'=>'role1'])!!}

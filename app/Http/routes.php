@@ -28,9 +28,10 @@ Route::get('/', function () {
 Route::get('forgot', 'Auth\PasswordController@getEmail');
 Route::post('password/email', 'Auth\PasswordController@postEmail');
 Route::post('pass_recover', 'Auth\PasswordController@postEmail');
+Route::post('pass_recover_auth', 'Auth\PasswordControllerAdmin@postEmail');
 // Password reset routes...
-Route::get('password/reset/{token}', 'Auth\PasswordController@getReset');
-Route::post('password/reset', 'Auth\PasswordController@postReset');
+Route::get('password/reset/{token}','Auth\PasswordController@getReset');
+Route::post('password/reset','Auth\PasswordController@postReset');
 
 Route::get('login','FrontController@login');
 //Route::get('forgot','FrontController@forgot');
@@ -52,6 +53,7 @@ Route::get('edit_info/{id?}','FrontController@edit_info');
 Route::get('pagos_show','FrontController@pagos_show');
 Route::put('update_info_user/{id?}','FrontController@update_info_user');
 Route::get('edit_react/{id?}','UsuarioController@edit_react');
+Route::post('change_pass/{id?}', 'FrontController@changePass');
 
 Route::get('admin/checkEmail/{email?}','UsuarioController@checkEmail');
 Route::post('admin/reactivar/{id?}','UsuarioController@reactivar');

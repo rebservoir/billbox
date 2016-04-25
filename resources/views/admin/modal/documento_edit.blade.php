@@ -13,17 +13,18 @@
 					<input type="hidden" name="_token_doc" value="{{ csrf_token() }}" id="token_doc">
 					<input type="hidden" id="id_doc" name="id_doc">
 					<div class="form-group">
-						{!!Form::label('Titulo:')!!}
+						{!!Form::label('*Titulo:')!!}
 						{!!Form::text('titulo',null,['id'=>'titulo_edit','class'=>'form-control','placeholder'=>'Ingresar titulo'])!!}
 					</div>
 					<div class="form-group">
 						<p>(Dejar vacio para conservar archivo actual.)</p>
-						{!!Form::label('Archivo:')!!}
+						{!!Form::label('*Archivo:')!!}
 						{!!Form::file('path', ['id'=>'path_edit'])!!}
 					</div>
 			</div>
 
 				<div class="modal-footer">
+					<div class="requeridos"><p>*Campos requeridos.</p></div>
 					<div class="btn_go">
 						<div id="btns_delete_documento">
 							{!!Form::submit('Actualizar',['id'=>'actualizar_documento', 'class'=>'btn btn-primary'])!!}

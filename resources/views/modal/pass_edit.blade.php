@@ -9,40 +9,36 @@
 				<h4 class="modal-title" id="myModalLabel">Modificar Contraseña</h4>
 			</div>
 
-
 			<div class="modal-body">
+                <br>
 
-				<p>Ingresa tu dirección de correo para restaurarla. <br> Es posible que tengas que verificar tu carpeta de spam</p>
+                <input type="hidden" name="_token_pass" value="{{ csrf_token() }}" id="token_pass">
+                <input type="hidden" id="id_pass" name="id_pass">
 
-            <br>
+                {!!Form::label('*Contraseña actual:')!!}
+                <br>
+                {!!Form::password('pass',null,['id'=>'current_pass','class'=>'form-control','placeholder'=>'Contraseña actual'])!!}
+                <br>
+                {!!Form::label('*Nueva contraseña:')!!}
+                <br>
+                {!!Form::password('new_pass',null,['id'=>'new_pass','class'=>'form-control','placeholder'=>'Nueva contraseña'])!!}
+                <br>
+                {!!Form::label('*Confirmar nueva contraseña:')!!}
+                <br>
+                {!!Form::password('new_pass_2',null,['id'=>'new_pass_2','class'=>'form-control','placeholder'=>'Confirmar nueva contraseña'])!!}
 
-                <form method="POST" action="/pass_recover">
-                    {!! csrf_field() !!}
-
-                    @if (count($errors) > 0)
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    @endif
-
-                    <div class="form-group">
-                        <label>Email</label>
-                        <br>
-                        <input type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder = 'Ingresa tu Email'>
-                    </div>
-
-                    <div>
-                        <button type="submit" class="btn btn-primary">
-                            Enviar Correo
-                        </button>
-                    </div>
-                </form>
-
-            <br>
-
+                <br>
 			</div>
+
+                <div class="modal-footer">
+                    <div class="requeridos"><p>*Campos requeridos.</p></div>
+                    <div class="btn_go">
+                        {!!link_to('#', $title='Modificar contraseña', $attributes = ['id'=>'pass_modify', 'class'=>'btn btn-primary'], $secure=null)!!}
+                    </div>
+                    <div class="procesando hide">
+                        <p>Procesando...</p>
+                    </div>
+                </div>
 			
 		</div>
 	</div>

@@ -12,7 +12,7 @@
 				<input type="hidden" name="_token" value="{{ csrf_token() }}" id="token">
 				<input type="hidden" id="id">
 				<div class="form-group">
-					{!!Form::label('Concepto:')!!}
+					{!!Form::label('*Concepto:')!!}
 					{!!Form::text('concept',null,['id'=>'concept','class'=>'form-control','placeholder'=>'Ingresar concepto'])!!}
 				</div>
 				<div class="form-group">
@@ -28,11 +28,12 @@
 					{!!Form::text('url',null,['id'=>'url','class'=>'form-control','placeholder'=>'Ingresar URL'])!!}
 				</div>
 				<div class="form-group">
-					{!!Form::label('Categoria:')!!}
+					{!!Form::label('*Categoria:')!!}
 					{!!Form::select('category', ['Emergencias', 'Mi Sitio', 'Tintorerias', 'Taxi', 'Farmacias', 'Gruas', 'Ferreterias', 'Otros'],null,['id'=>'category'])!!}
 				</div>
 			</div>
 				<div class="modal-footer">
+					<div class="requeridos"><p>*Campos requeridos.</p></div>
 					<div class="btn_go">
 						<div id="btns_delete_util">
 							{!!link_to('#', $title='Actualizar', $attributes = ['id'=>'actualizar_util', 'class'=>'btn btn-primary'], $secure=null)!!}

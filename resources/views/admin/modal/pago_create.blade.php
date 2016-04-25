@@ -12,23 +12,24 @@
 				<input type="hidden" name="_token" value="{{ csrf_token() }}" id="token">
 
 				<div id="the-basics" class="form-group" style="float:left;">
-					{!!Form::label('Usuario:')!!}
-					{!!Form::text('id_user',null,['id'=>'search-input','class'=>'typeahead form-control','placeholder'=>'Ingresar Usuario'])!!}
+					{!!Form::label('*Usuario:')!!}
+					{!!Form::text('id_user',null,['id'=>'search-input','class'=>'typeahead form-control','placeholder'=>'Ingresar nombre de usuario y seleccionar.'])!!}
 				</div>
 				<div class="form-group form_date">
-					{!!Form::label('Fecha con formato: aaaa-mm-dd')!!}
+					{!!Form::label('*Fecha con formato: aaaa-mm-dd')!!}
 					{!! Form::text('date', '',['id' => 'datepicker', 'placeholder'=>'aaaa-mm-dd'])!!}
 				</div>
 				<div class="form-group">
-					{!!Form::label('Monto:')!!}
+					{!!Form::label('*Monto:')!!}
 					<input type="text" id="amount" class="form-control" value="Cuota de usuario (automatico)" disabled>
 				</div>
 				<div class="form-group">
-					{!!Form::label('Status:')!!}
+					{!!Form::label('*Status:')!!}
 					{!!Form::select('status', ['Adeudo', 'Pagado'],null,['id'=>'status'])!!}
 				</div>
 			</div>
 				<div class="modal-footer">
+					<div class="requeridos"><p>*Campos requeridos.</p></div>
 					<div class="btn_go">
 						{!!link_to('#', $title='Registrar pago', $attributes = ['id'=>'registrar_pago', 'class'=>'btn btn-primary'], $secure=null)!!}
 					</div>

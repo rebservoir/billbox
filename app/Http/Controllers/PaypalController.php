@@ -24,6 +24,7 @@ use TuFracc\User;
 use TuFracc\Pagos;
 use TuFracc\Cuotas;
 use TuFracc\Sites;
+use TuFracc\Sites_users;
 use TuFracc\Paypal_credentials;
 
 use TuFracc\Http\Requests;
@@ -114,7 +115,7 @@ public function postPayment($type){
 		$user_id = $this->auth->user()->id;
 		$month = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
 
-		$user_type = Sites_users::where('id_site',$id_site)->where('id_user',$id_user)->value('type');
+		$user_type = Sites_users::where('id_site',$id_site)->where('id_user',$user_id)->value('type');
         $cuota = Cuotas::find($user_type);
 
 		$payer = new Payer();

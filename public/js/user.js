@@ -20,7 +20,8 @@ function clearAlerts(){
     $("#email_msg").html('');
     $("#react_btn").addClass('hidden');
     $(".type_msg").html('');
-    $("#asignar_btn").addClass('hidden');
+    $(".role_msg").html('');
+    $("#asignar_btn").addClass('hidden');    
 }
 
 function hide_alert(){
@@ -48,6 +49,7 @@ function get_id_user_pago(id_user){
 function Mostrar(btn){
 
     hide_alert();
+    clearAlerts();
 
     var route = "/usuario/"+btn.value+"/edit";
 
@@ -61,19 +63,17 @@ function Mostrar(btn){
         $("#id1").val(res[0].id);
         $("#type1").val(res[0].type);
     });
+
 }
 
 function loadData(){
 
     var route = "/load";
     $.get(route, function(res){
-        console.log(res);
     });
 }
 
  $("#load_data").on("submit", function(e){
-    console.log('carga');
-
     hide_alert();
     e.preventDefault();
     var fd = new FormData(this);
@@ -181,7 +181,6 @@ $( "#email" ).change(function() {
         var route = "checkEmail/"+dato;
 
         $.get(route, function(response){
-            console.log(response.res);
             if(response.res == '1'){ 
                 $("#email_msg").html('<div class="alert alert-success" style="padding: 5px;"><p>Email sin registrar.</p></div>');
             }else if(response.res == '2'){ 
@@ -230,7 +229,7 @@ $("#reactivar_2").click(function(){
 
     if(dato1==null || dato1 == ''){
         $(".type_msg").html('<div class="alert alert-danger" style="padding: 5px;"><p>Se debe asignar una cuota al usuario.</p></div>');
-    }else{
+    }else{ 
 
     $(".btn_reactivar_2").addClass("hide");
     $(".procesando").removeClass("hide");
@@ -522,7 +521,6 @@ $("#actualizar").click(function(){
 
 $("#delete_att").click(function(){
     $('#btns_delete').slideUp( "fast", function() {
-        console.log('hola');
         $("#btns_confirm").show( "fast" );
     });
 });
@@ -628,3 +626,62 @@ function sort(sort){
     var route = "/admin/usuarios/sort/" + sort + "" ;
      window.location.assign(route);
 }
+
+
+$("#type").change(function() {
+    
+    var id = this.value;
+
+    if(id==null || id == ''){
+        $(".type_msg").html('<div class="alert alert-danger" style="padding: 5px;"><p>Se debe asignar una cuota al usuario.</p></div>');
+    }else{
+        var route = "/cuotas/"+ id +"/edit";
+
+        $.get(route, function(res){
+            var concepto = res.concepto;
+            var monto = res.amount;
+            var msg = '<div class="alert alert-info" style="padding: 5px;">Monto de ' + concepto + ': $' + monto +'.00</div>';
+            $(".type_msg").html( msg );
+        });
+    }
+});
+
+$("#type1").change(function() {
+    
+    var id = this.value;
+
+    if(id==null || id == ''){
+        $(".type_msg").html('<div class="alert alert-danger" style="padding: 5px;"><p>Se debe asignar una cuota al usuario.</p></div>');
+    }else{
+        var route = "/cuotas/"+ id +"/edit";
+
+        $.get(route, function(res){
+            var concepto = res.concepto;
+            var monto = res.amount;
+            var msg = '<div class="alert alert-info" style="padding: 5px;">Monto de ' + concepto + ': $' + monto +'.00</div>';
+            $(".type_msg").html( msg );
+        });
+    }
+});
+
+$("#role").change(function() {
+
+    var role = this.value;
+
+    if(role==1){
+        $(".role_msg").html('<div class="alert alert-warning" style="padding: 5px;">Atención: Ha seleccionado un Rol de Administrador para este usuario.</div>');
+    }else{
+        $(".role_msg").html('');
+    }
+});
+
+$("#role1").change(function() {
+
+    var role = this.value;
+
+    if(role==1){
+        $(".role_msg").html('<div class="alert alert-warning" style="padding: 5px;">Atención: Ha seleccionado un Rol de Administrador para este usuario.</div>');
+    }else{
+        $(".role_msg").html('');
+    }
+});

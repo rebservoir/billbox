@@ -5,9 +5,15 @@
     var id_user=0;
     var lng;
 
-
+function hide_alert(){
+    $("#msj-success").addClass("hide");
+    $("#msj-fail").addClass("hide");
+    $("#alert-success").addClass("hide");
+}
 
 $("#actualizar_pago").click(function(){
+
+    hide_alert();
 
     id_user = $("#id_user").val();
 
@@ -35,6 +41,8 @@ $("#actualizar_pago").click(function(){
 
 
 function update(){
+
+    hide_alert();
 
     for (idx = 0; idx < lng; idx++){
 
@@ -64,6 +72,8 @@ function update(){
 
 
 function registrar_pagos($cont){
+
+    hide_alert();
 
     if($cont==1){
         modal = '#mensual';
@@ -135,6 +145,55 @@ function registrar_pagos($cont){
     }
 }
 
+/** modificar **/
+
+function asignar_id(btn){
+
+    hide_alert();
+
+    $("#id_pass").val(btn);
+    console.log(btn);
+}
+
+$("#pass_modify").click(function(){
+
+    hide_alert();
+
+    var c1 = $("#current_pass").val();
+    var c2 = $("#new_pass").val();
+    var c3 = $("#new_pass_2").val();
+    var id = $("#id_pass").val();
+    var token = $("#token_pass").val();
+    var route = "change_pass/"+ id;
+
+    $.ajax({
+        url: route,
+        headers: {'X-CSRF-TOKEN': token},
+        type: 'POST',
+        dataType: 'json',
+        data:{
+            current_pass: c1, 
+            new_pass: c2, 
+            new_pass_2: c3
+        },
+        success:function(data){
+            if(data.res=='success'){
+                    $("#msj-success").removeClass("hide");
+                    $("#msj-success").html(data.msg);
+                    $('#pass_edit').modal('toggle');
+            }else if(data.res=='fail'){
+                    $("#msj-fail").removeClass("hide"); 
+                    $("#msj-fail").html(data.msg);
+                    $('#pass_edit').modal('toggle');
+            } 
+        },
+        error: function (jqXHR, exception) {
+            $("#msj-fail").removeClass("hide"); 
+            $("#msj-fail").html('Volver a intentar.');
+            $('#pass_edit').modal('toggle');
+        }
+    });
+});
 
 
 

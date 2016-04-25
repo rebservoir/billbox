@@ -13,12 +13,12 @@
 				<input type="hidden"  value="" id="evento_id">
 
 				<div class="form-group">
-					{!!Form::label('Titulo:')!!}
+					{!!Form::label('*Titulo:')!!}
 					{!!Form::text('title',null,['id'=>'ev_title1','class'=>'input_title','placeholder'=>'Ingresar Titulo'])!!}
 				</div>
 
 				<div class="form-group form_date">
-					{!!Form::label('Fecha de Inicio con formato: aaaa-mm-dd:')!!}
+					{!!Form::label('*Fecha de Inicio con formato: aaaa-mm-dd:')!!}
 					{!! Form::text('start', '', ['id' => 'datepicker_start1','placeholder'=>'aaaa-mm-dd'])!!}
 				</div>
 
@@ -28,6 +28,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
+				<div class="requeridos"><p>*Campos requeridos.</p></div>
 				<div class="btn_go">
 					<div id="btns_delete">
 						{!!link_to('#', $title='Actualizar Evento', $attributes = ['id'=>'actualizar_evento', 'class'=>'btn btn-primary'], $secure=null)!!}

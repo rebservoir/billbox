@@ -4,7 +4,6 @@ var id_usuario_actual;
 
 function get_id_user_pago(id_user){
     id_usuario = id_user;
-    //console.log('la id_user es:' + id_usuario);
 }
 
 function hide_alert(){
@@ -21,6 +20,19 @@ function hide_btn(){
 function hide_btn2(){
     $(".procesando").addClass("hide");
     $(".btn_go").removeClass("hide");
+}
+
+function clearModals(){
+    $("#search-input").val('');
+    $("#datepicker").val('');
+    $("#status").val(null);
+    $("#concept").val('');
+    $("#path").val(null);
+    $("#datepicker_eg").val('');
+    $("#amount_egresos").val('');
+    $("#concept_cuota").val('');
+    $("#monto_cuota").val('');
+
 }
 
  $.datepicker.regional['es'] = {
@@ -105,6 +117,7 @@ $("#registrar_pago").click(function(){
                     $("#tablaPagos").load(location.href+" #tablaPagos>*","");
                     $('#pago_create').modal('toggle');
                     hide_btn2();
+                    clearModals();
             }else if(data.tipo=='fail'){
                     $("#msj-fail").removeClass( "hide");
                     $("#msj-fail").html(data.message);
@@ -115,8 +128,7 @@ $("#registrar_pago").click(function(){
          error: function (jqXHR, exception) {
             var obj = jQuery.parseJSON(jqXHR.responseText);
             $("#msj-fail").removeClass( "hide");
-            console.log(obj);
-            var msj = obj.id_user + '<br>' + obj.date[0] + '<br>' + obj.date[1] + '<br>' + obj.amount + '<br>';
+            var msj = obj.id_user + '<br>' + obj.date + '<br>' + obj.amount + '<br>';
             var res = msj.replace(/undefined<br>/gi, '');
             var res = res.replace(/id user/gi, 'Usuario');
             var res = res.replace(/date/gi, 'Fecha');
@@ -124,6 +136,7 @@ $("#registrar_pago").click(function(){
             var res = res.replace(/Y-m-d/gi, 'año-mes-dia');
             $("#msj-fail").html(res);
             $('#pago_create').modal('toggle');
+            hide_btn2();
         } 
     });
 });
@@ -273,13 +286,14 @@ $("#cancel_pago").click(function(){
             $("#tablaEgresos").load(location.href+" #tablaEgresos>*","");
             $('#egresos_create').modal('toggle');
             hide_btn2();
+            clearModals();
         },
         error: function (jqXHR, exception) {
             var obj = jQuery.parseJSON(jqXHR.responseText);
             $("#msj-fail").removeClass("hide");
-            var msj = obj.id_user + '<br>' + obj.date[0] + '<br>' + obj.date[1] + '<br>' + obj.amount + '<br>';
+            var msj = obj.concept + '<br>' + obj.date[0] + '<br>' + obj.date[1] + '<br>' + obj.amount + '<br>';
             var res = msj.replace(/undefined<br>/gi, '');
-            var res = res.replace(/id_user/gi, 'Usuario');
+            var res = res.replace(/concept/gi, 'Concepto');
             var res = res.replace(/date/gi, 'Fecha');
             var res = res.replace(/amount/gi, 'Cantidad');
             $("#msj-fail").html(res);
@@ -360,7 +374,6 @@ $( document ).ready(function() {
 
     for (index = 0; index < res.length; index++) {
         names[index] = res[index].name + '/' +res[index].id;
-        //console.log(names[index]);
     }
 
     });
@@ -440,6 +453,7 @@ $("#registrar_cuota").click(function(){
             $("#divCuotas").load(location.href+" #divCuotas>*","");
             $('#cuota_create').modal('toggle');
             hide_btn2();
+            clearModals();
         },
          error: function (jqXHR, exception) {
             var obj = jQuery.parseJSON(jqXHR.responseText);
@@ -596,7 +610,6 @@ function getUsers(sort){
     var route = "/admin/usuarios/sort_usr/" + sort + "" ;
 
     $.get(route, function(res){
-        console.log(res);
 
         var code="<table class='table table-striped'><thead><tr><th>Marcar</th><th>Nombre</th><th>Email</th><th>Status</th><tr></thead><tbody>";
 
@@ -661,7 +674,6 @@ $("#btn_send").click(function(){
         });
 
     if( tipo == 1){
-        console.log('mensaje');
             var msg = $("#txt_msg").val();
             var subj = $("#txt_subj").val();
 
@@ -686,11 +698,9 @@ $("#btn_send").click(function(){
                                     $("#msj-success").html('Error al enviar el mensaje. Intentar de nuevo.');
                                 }
                             });
-                                console.log(usrs[index]);
                                 index++;
                         });
     }else if( tipo == 2){
-        console.log('Corte');
             jQuery.each( usrs, function() { 
                     var route = "/sendEmail/" + usrs[index] + "/corte";
                     var token = $("#token_send").val();
@@ -708,11 +718,9 @@ $("#btn_send").click(function(){
                             $("#msj-success").html('Error al enviar el mensaje. Intentar de nuevo.');
                         }
                     });
-                        console.log(usrs[index]);
                         index++;
                 }); 
     }else{
-        console.log('adeudo');
          jQuery.each( usrs, function(){ 
                     var route = "/sendEmail/" + usrs[index] + "/adeudo";
                     var token = $("#token_send").val();
@@ -730,7 +738,6 @@ $("#btn_send").click(function(){
                             $("#msj-success").html('Error al enviar el mensaje. Intentar de nuevo.');
                         }
                 });
-                    console.log(usrs[index]);
                     index++;
         }); 
     }
@@ -757,7 +764,6 @@ function Mostrar_sitio(btn){
 function mostrar_paypal(btn){
 
     hide_alert();
-    console.log(btn.value);
 
     var route = "/credenciales/"+btn.value+"/edit";
 

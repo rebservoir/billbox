@@ -109,10 +109,9 @@ class CuotasController extends Controller
      */
     public function destroy($id)
     {
-        $id_cuota = $id;
+        $id_site = \Session::get('id_site');
         $cuotas = Cuotas::find($id);
-        $users = DB::table('users')->where('type', $id)->get();
-
+        $users = DB::table('sites_users')->where('id_site',$id_site)->where('type', $id)->get();
 
         if(empty($users)){
             $cuotas->delete();
@@ -125,7 +124,7 @@ class CuotasController extends Controller
 
             return response()->json([
                 "tipo" => 'warning',
-                "message"=>'Atencion: Esta cuota no puede ser eliminada porque esta asignada a usuarios.'
+                "message"=>'Atención: Esta cuota no puede ser eliminada porque ha sido asignada a usuarios.'
             ]);
         }
 

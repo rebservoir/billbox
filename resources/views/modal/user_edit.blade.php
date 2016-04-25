@@ -15,11 +15,11 @@
 				<input type="hidden" id="id">
 				
 				<div class="form-group">
-					{!!Form::label('Nombre:')!!}
+					{!!Form::label('*Nombre:')!!}
 					{!!Form::text('name',null,['id'=>'name','class'=>'form-control','placeholder'=>'Ingresar nombre de usuario'])!!}
 				</div>
 				<div class="form-group">
-					{!!Form::label('Email:')!!}
+					{!!Form::label('*Email:')!!}
 					{!!Form::email('email',null,['id'=>'email','class'=>'form-control','placeholder'=>'Ingresar Email'])!!}
 				</div>
 				<div class="form-group">
@@ -37,6 +37,7 @@
 			</div>
 			
 			<div class="modal-footer">
+				<div class="requeridos"><p>*Campos requeridos.</p></div>
 				{!!link_to('#', $title='Modificar', $attributes = ['id'=>'modificar_info', 'class'=>'btn btn-primary'], $secure=null)!!}
 			</div>
 		</div>

@@ -27,6 +27,7 @@ use Closure;
 use Session;
 use Redirect;
 use Mail;
+use Hash;
 use Illuminate\Database\Eloquent;
 
 class FrontController extends Controller
@@ -327,6 +328,47 @@ class FrontController extends Controller
             return response()->json([
                 "message"=>'listo'
             ]);
+    }
+
+    public function changePass($id, Request $request){
+
+        $user = User::find($id);
+        $new_pass = $request->new_pass;
+        $new_pass_2 = $request->new_pass_2;
+        $c1 = strlen($new_pass);
+        $c2 = strlen($new_pass_2);
+
+        if(Hash::check($request->current_pass, $user->password)){
+            if( ($c1>=6) && ($c2>=6) ){
+                if($new_pass == $new_pass_2){
+
+                    $user->password = Hash::make($new_pass);
+                    $user->save();
+
+                    return response()->json([
+                        "res" => 'success',
+                        "msg"=>'La contraseña ha sido modificada.'
+                    ]);
+                }else{
+                    return response()->json([
+                        "res" => 'fail',
+                        "msg"=>'La nueva contraseña no coincide con la confirmación.'
+                    ]);
+                }    
+            }else{
+                    return response()->json([
+                        "res" => 'fail',
+                        "msg"=>'La nueva contraseña debe tener mínimo 6 caracteres.'
+                    ]);
+                 } 
+        }else{
+            return response()->json([
+                "res" => 'fail',
+                "msg"=>'La contraseña actual no es correcta.'
+            ]);
+        }
+
+        
     }
 
 

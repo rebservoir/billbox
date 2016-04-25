@@ -27,4 +27,6 @@
 
 <button value='{!!Auth::user()->id!!}' OnClick='mostrar_info(this);' class='btn btn-primary' data-toggle="modal" data-target="#user_edit">Modificar Información</button>
 	<br><br>
-<button value='{!!Auth::user()->id!!}'  class='btn btn-primary' data-toggle="modal" data-target="#pass_edit">Modificar Contraseña</button>
+<button value='{!!Auth::user()->id!!}' OnClick='asignar_id(this.value);' class='btn btn-primary' data-toggle="modal" data-target="#pass_edit">Modificar Contraseña</button>
+
+

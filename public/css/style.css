@@ -479,6 +479,10 @@ div#cont_table{
 .saldos tr,td{
     background: transparent !important;
 }
+.saldos tr{
+    width: 50%;
+    display: inline;
+}
 .saldos th{
     background: transparent;
     color: #222;

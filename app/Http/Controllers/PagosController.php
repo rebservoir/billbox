@@ -60,10 +60,20 @@ class PagosController extends Controller
             $id_site = \Session::get('id_site');
             $id_user = $request->id_user;
             $user = User::find($id_user);
-            $cuota = Cuotas::find($user->type);
+            $type = DB::table('sites_users')->where('id_site', $id_site)->where('id_user', $id_user)->value('type');
+            $cuota = Cuotas::find($type);
             $pagos = DB::table('pagos')->where('id_user', $id_user)->where('id_site', $id_site)->get();
             $newDate = explode("-", $request->date);
             $flag=true;
+
+            if(empty($user)){
+
+                return response()->json([
+                  "tipo" => 'fail',
+                  "message" => 'Seleccionar un usuario.'
+                ]);
+
+            }else{
 
             if(empty($pagos)){
 
@@ -76,7 +86,7 @@ class PagosController extends Controller
                                 'id_site' => $id_site
                             ]);
 
-                            $data = [ 'msg'=> 'pago generado', 'subj'=> 'Pago acreditado', 'user_mail' => $user->email];
+                            $data = [ 'msg'=> 'pago generado', 'subj'=> 'Pago generado', 'user_mail' => $user->email];
 
                             Mail::send('emails.msg',$data, function ($msj) use ($data) {
                                 $msj->subject($data['subj']);
@@ -86,7 +96,6 @@ class PagosController extends Controller
                             return response()->json([
                                 "tipo" => 'success'
                             ]);
-
 
             }else{
 
@@ -122,7 +131,7 @@ class PagosController extends Controller
                                 'id_site' => $id_site
                             ]);
 
-                            $data = [ 'msg'=> 'pago generado', 'subj'=> 'Pago acreditado', 'user_mail' => $user->email];
+                            $data = [ 'msg'=> 'pago generado', 'subj'=> 'Pago generado', 'user_mail' => $user->email];
 
                             Mail::send('emails.msg',$data, function ($msj) use ($data) {
                                 $msj->subject($data['subj']);
@@ -148,6 +157,7 @@ class PagosController extends Controller
 
             }
       
+          }
         } // end request ajax
     } //end function
 

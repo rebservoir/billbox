@@ -15,6 +15,20 @@ function hide_btn2(){
     $(".btn_go").removeClass("hide");
 }
 
+function clearModals(){
+    $("#titulo").val('');
+    $("#contenido").val('');
+    $("#path").val(null);
+
+    $("#concept1").val('');
+    $("#address1").val('');
+    $("#phone_num1").val('');
+    $("#url1").val('');
+
+    $("#titulo_doc").val('');
+    $("#path_doc").val(null);
+}
+
 /** Utiles **/
 
 $("#registrar").click(function(){
@@ -43,6 +57,7 @@ $("#registrar").click(function(){
             $("#tablaUtiles").load(location.href+" #tablaUtiles>*","");
             $('#util_create').modal('toggle');
             hide_btn2();
+            clearModals();
         },
          error: function (jqXHR, exception) {
             var obj = jQuery.parseJSON(jqXHR.responseText);
@@ -212,6 +227,7 @@ $("#registrar_noticia").on("submit", function(e){
             $("#tablaNoticias").load(location.href+" #tablaNoticias>*","");
             $('#noticia_create').modal('toggle');
             hide_btn2();
+            clearModals();
         },
         error: function (jqXHR, exception) {
             var obj = jQuery.parseJSON(jqXHR.responseText);
@@ -229,66 +245,6 @@ $("#registrar_noticia").on("submit", function(e){
 
 });
 
-/*
-$("#actualizar_noticia").on("submit", function(e){
-
-    hide_alert();
-    
-    e.preventDefault();
-
-    var dato3 = [];
-    var value = $('#id_noti_1').val();
-    var dato1 = $("#titulo1").val();
-    var dato2 = $("#contenido1").val();
-    dato3[0] = $("#path1")[0].files[0];
-
-    //var formData = new FormData();
-    var form = $('#actualizar_noticia');
-    var formData = new FormData(form.get(0));
-
-    //formData.append('titulo', dato1);
-    //formData.append('contenido', dato2);
-
-
-    //No File
-    if ($('#picture').get(0).files.length ==! 0) {
-        console.log("ok file");
-        formData.append('path', $("#path1")[0].files[0]);
-    }  
-
-    //var route = "edit_noticia/"+value+"";
-    var route = "/editNoticia/" + value+ '/';
-    var token = $("#token_noti_1").val();
-
-    $.ajax({
-        url: route,
-        headers: {'X-CSRF-TOKEN': token},
-        type: 'PUT',
-        dataType: 'json',
-        data:formData,
-        contentType: false,
-        processData: false,
-        //data:{ titulo:dato1, texto:dato2},
-        success:function(){
-            $("#msj-success").removeClass( "hide");
-            $("#tablaNoticias").load(location.href+" #tablaNoticias>*","");
-            $('#noticia_edit').modal('toggle');
-        },
-        error: function (jqXHR, exception) {
-            var obj = jQuery.parseJSON(jqXHR.responseText);
-            $("#msj-fail").removeClass( "hide");
-            console.log(obj);
-            var msj = obj.titulo + '<br>' + obj.texto + '<br>' + obj.path + '<br>';
-            var res = msj.replace(/undefined<br>/gi, '');
-            var res = res.replace(/titulo/gi, 'Titulo');
-            var res = res.replace(/texto/gi, 'Contenido');
-            var res = res.replace(/path/gi, 'Imagen');
-            $("#msj-fail").html(res);
-        }
-    });
-
-});
-*/
 
 $("#delete_att_noticia").click(function(){
     $('#btns_delete_noticia').slideUp( "fast", function() {
@@ -377,6 +333,7 @@ function mostrar_doc(btn){
             $("#divDocs").load(location.href+" #divDocs>*","");
             $('#documento_create').modal('toggle');
             hide_btn2();
+            clearModals();
         },
         error: function (jqXHR, exception) {
             var obj = jQuery.parseJSON(jqXHR.responseText);

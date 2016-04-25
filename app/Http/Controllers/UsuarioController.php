@@ -9,6 +9,7 @@ use TuFracc\Http\Requests\UserUpdateRequest;
 use TuFracc\Http\Controllers\Controller;
 use TuFracc\User;
 use TuFracc\Cuotas;
+use TuFracc\Pagos;
 use TuFracc\Sites;
 use TuFracc\Sites_users;
 use TuFracc\Sites_users_deleted;
@@ -140,34 +141,36 @@ class UsuarioController extends Controller
                 return response()->json([
                     "res"=> "2"
                 ]);
+
             }else{ //no activo en sitio
 
-                //esta en otro sitio?
-                $site_user = Sites_users::where('id_user',$user->id)->count();
-                
-                if($site_user>0){ //activo en otro sitio
+                //fue eliminado de este sitio?
+                $site_user_del = Sites_users_deleted::where('id_user',$user->id)->where('id_site',$id_site)->count();
+
+                if($site_user_del>0){ //fue eliminado de este sitio
                     return response()->json([
-                        "res"=> "3",
+                        "res"=> "5",
                         "id_user"=> $user->id
                     ]);
-                }else{ //no activo en otro sitio
+                }else{ //otro sitio?
 
-                    //fue eliminado de este sitio?
-                    $site_user_del = Sites_users_deleted::where('id_user',$user->id)->where('id_site',$id_site)->count();
-
-                    if($site_user_del>0){ //fue eliminado de este sitio
+                    //esta en otro sitio?
+                    $site_user = Sites_users::where('id_user',$user->id)->count();
+                        
+                    if($site_user>0){ //activo en otro sitio
                         return response()->json([
-                            "res"=> "5",
+                            "res"=> "3",
                             "id_user"=> $user->id
                         ]);
-                    }else{ //fue eliminado de otro sitio
-                        return response()->json([
-                                "res"=> "4",
-                                "id_user"=> $user->id
-                            ]);
+                    }else{ // eliminado de otro sitio
+
+                    return response()->json([
+                            "res"=> "4",
+                            "id_user"=> $user->id
+                        ]);
                     }
                 }
-            }  
+            }
         }else{  //no existe
             return response()->json([
                 "res"=> "1"
@@ -189,12 +192,21 @@ class UsuarioController extends Controller
 
         if( $user_count<$user_limit){
             
+            //check status
+            $adeudos = DB::table('pagos')->where('id_user', $id)->where('id_site', $id_site)->where('status', 0 )->count();
+
+            if($adeudos>0){
+                $status = 0;
+            }else{
+                $status = 1; 
+            }
+
             DB::table('sites_users')->insert(
                      ['id_user' => $id,
                       'id_site' => $id_site,
                       'type' => $request->type,
                       'role' => $request->role,
-                      'status' => 1  
+                      'status' => $status  
                      ]);
 
             //email invitacion
@@ -247,12 +259,21 @@ class UsuarioController extends Controller
             $usuario->password = Hash::make($password);
             $usuario->save();
 
+            //check status
+            $adeudos = DB::table('pagos')->where('id_user', $id)->where('id_site', $id_site)->where('status', 0 )->count();
+
+            if($adeudos>0){
+                $status = 0;
+            }else{
+                $status = 1; 
+            }
+
             $react_user = DB::table('sites_users')->insert(
                     ['id_user' => $id,
                      'id_site' => $id_site,
                      'type' => $request->type,
                      'role' => $request->role,
-                     'status' => 1  
+                     'status' => $status
                      ]);
 
             //email invitacion

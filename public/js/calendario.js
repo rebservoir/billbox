@@ -64,6 +64,12 @@ function hide_alert(){
     $("#alert-success").addClass("hide");
 }
 
+function clearModals(){
+    $("#ev_title").val('');
+    $("#datepicker_start").val('');
+    $("#datepicker_end").val('');
+}
+
 
 $(function() {
     $( "#datepicker_start" ).datepicker({

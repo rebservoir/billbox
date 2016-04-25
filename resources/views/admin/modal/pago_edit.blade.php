@@ -14,23 +14,24 @@
 				<input type="hidden" name="hidden_id_user" value="" id="hidden_id_user">
 				<input type="hidden" id="id_pago">
 				<div id="the-basics" class="form-group" style="float:left;">
-					{!!Form::label('Usuario:')!!}
-					{!!Form::text('id_user',null,['id'=>'search-input2','class'=>'typeahead form-control','placeholder'=>'Ingresar Usuario'])!!}
+					{!!Form::label('*Usuario:')!!}
+					{!!Form::text('id_user',null,['id'=>'search-input2','class'=>'typeahead form-control','placeholder'=>'Ingresar nombre de usuario y seleccionar.'])!!}
 				</div>
 				<div class="form-group form_date">
-					{!!Form::label('Fecha con formato: aaaa-mm-dd')!!}
+					{!!Form::label('*Fecha con formato: aaaa-mm-dd')!!}
 					{!! Form::text('date', '', ['id' => 'datepicker_pago','placeholder'=>'aaaa-mm-dd'])!!}
 				</div>
 				<div class="form-group">
-					{!!Form::label('Monto:')!!}
+					{!!Form::label('*Monto:')!!}
 					{!!Form::text('amount',null,['id'=>'amount_pago','class'=>'form-control','placeholder'=>'Ingresar Cantidad','disabled' => 'disabled'])!!}
 				</div>
 				<div class="form-group">
-					{!!Form::label('Status:')!!}
+					{!!Form::label('*Status:')!!}
 					{!!Form::select('status', ['Adeudo', 'Pagado'],null,['id'=>'status_pago'])!!}
 				</div>
 			</div>
 				<div class="modal-footer">
+					<div class="requeridos"><p>*Campos requeridos.</p></div>
 					<div class="btn_go">
 						<div id="btns_delete_pago">
 							{!!link_to('#', $title='Actualizar', $attributes = ['id'=>'actualizar_pago', 'class'=>'btn btn-primary'], $secure=null)!!}
