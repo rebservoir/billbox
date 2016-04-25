@@ -338,7 +338,8 @@ class FrontController extends Controller
         $c1 = strlen($new_pass);
         $c2 = strlen($new_pass_2);
 
-        if(Hash::check($request->current_pass, $user->password)){
+
+        if(Hash::check($request->pass, $user->password)){
             if( ($c1>=6) && ($c2>=6) ){
                 if($new_pass == $new_pass_2){
 

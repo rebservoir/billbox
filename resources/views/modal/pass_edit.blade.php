@@ -17,16 +17,15 @@
 
                 {!!Form::label('*Contraseña actual:')!!}
                 <br>
-                {!!Form::password('pass',null,['id'=>'current_pass','class'=>'form-control','placeholder'=>'Contraseña actual'])!!}
+                {!!Form::password('pass', array('id' => 'current_pass' ,'class' => 'form-control', 'placeholder'=>'Contraseña actual'))!!}
                 <br>
                 {!!Form::label('*Nueva contraseña:')!!}
                 <br>
-                {!!Form::password('new_pass',null,['id'=>'new_pass','class'=>'form-control','placeholder'=>'Nueva contraseña'])!!}
+                {!!Form::password('new_pass', array('id' => 'new_pass' ,'class' => 'form-control', 'placeholder'=>'Nueva contraseña'))!!}
                 <br>
                 {!!Form::label('*Confirmar nueva contraseña:')!!}
                 <br>
-                {!!Form::password('new_pass_2',null,['id'=>'new_pass_2','class'=>'form-control','placeholder'=>'Confirmar nueva contraseña'])!!}
-
+                {!!Form::password('new_pass_2', array('id' => 'new_pass_2' ,'class' => 'form-control', 'placeholder'=>'Confirmar nueva contraseña'))!!}
                 <br>
 			</div>
 

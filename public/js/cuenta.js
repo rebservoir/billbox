@@ -164,7 +164,7 @@ $("#pass_modify").click(function(){
         type: 'POST',
         dataType: 'json',
         data:{
-            current_pass: c1, 
+            pass: c1, 
             new_pass: c2, 
             new_pass_2: c3
         },

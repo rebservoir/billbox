@@ -697,10 +697,11 @@ $("#role1").change(function() {
 function asignar_id(btn){
 
     hide_alert();
+    console.log('id:'+btn);
     $('#user_edit').modal('toggle');
-    $("#id_pass").val(btn);
-    $('#pass_edit').modal('toggle');
 
+    $('#pass_edit').modal('toggle');
+    $("#id_pass").val(btn);
 }
 
 $("#pass_modify").click(function(){
@@ -720,7 +721,7 @@ $("#pass_modify").click(function(){
         type: 'POST',
         dataType: 'json',
         data:{
-            current_pass: c1, 
+            pass: c1, 
             new_pass: c2, 
             new_pass_2: c3
         },
