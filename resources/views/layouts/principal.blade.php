@@ -19,9 +19,12 @@
 	<div class="">
 		<div id="head" class="">
 			<div class="container">
-				<div id="logo" class="col-xs-12 col-sm-6 col-md-6 col-lg-6 pull-left">
-					{!!Html::image('img/logo_tu.jpg')!!}
-				</div>
+				
+				<a href="home">
+					<div id="logo" class="col-xs-12 col-sm-6 col-md-6 col-lg-6 pull-left">
+						{!!Html::image('img/logo_tu.jpg')!!}
+					</div>
+				</a>
 				
 				<div id="mensaje">
 					<div class="pull-left">

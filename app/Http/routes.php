@@ -67,6 +67,7 @@ Route::get('admin/contenidos','FrontController@contenidos');
 Route::get('admin/noticia_show/{id?}','NoticiaController@show');
 Route::get('admin/usuarios/','FrontController@usuarios');
 Route::get('admin/usuarios/search/{id?}','UsuarioController@search');
+Route::post('admin/change_pass/{id?}', 'FrontController@changePass');
 
 Route::get('admin/usuarios/sort/{sort?}','UsuarioController@sort');
 Route::get('admin/usuarios/sort_usr/{sort?}','UsuarioController@sort_usr');

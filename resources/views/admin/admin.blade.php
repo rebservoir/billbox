@@ -21,9 +21,11 @@
 	<div class="">
 		<div id="head" class="">
 			<div class="container">
-				<div id="logo" class="">
-					{!!Html::image('img/logo_tu.jpg')!!}
-				</div>
+				<a href="home">
+					<div id="logo" class="">
+						{!!Html::image('img/logo_tu.jpg')!!}
+					</div>
+				</a>
 
 				<div id="mensaje">
 					<div class="pull-left">

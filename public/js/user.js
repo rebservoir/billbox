@@ -22,6 +22,7 @@ function clearAlerts(){
     $(".type_msg").html('');
     $(".role_msg").html('');
     $("#asignar_btn").addClass('hidden');    
+    $("#changePass").addClass("hide");
 }
 
 function hide_alert(){
@@ -62,6 +63,11 @@ function Mostrar(btn){
         $("#role1").val(res[0].role);
         $("#id1").val(res[0].id);
         $("#type1").val(res[0].type);
+
+        if(res[0].role == 1){
+            $("#changePass").removeClass("hide");
+        }
+
     });
 
 }
@@ -684,4 +690,55 @@ $("#role1").change(function() {
     }else{
         $(".role_msg").html('');
     }
+});
+
+/** modificar password **/
+
+function asignar_id(btn){
+
+    hide_alert();
+    $('#user_edit').modal('toggle');
+    $("#id_pass").val(btn);
+    $('#pass_edit').modal('toggle');
+
+}
+
+$("#pass_modify").click(function(){
+
+    hide_alert();
+
+    var c1 = $("#current_pass").val();
+    var c2 = $("#new_pass").val();
+    var c3 = $("#new_pass_2").val();
+    var id = $("#id_pass").val();
+    var token = $("#token_pass").val();
+    var route = "change_pass/"+ id;
+
+    $.ajax({
+        url: route,
+        headers: {'X-CSRF-TOKEN': token},
+        type: 'POST',
+        dataType: 'json',
+        data:{
+            current_pass: c1, 
+            new_pass: c2, 
+            new_pass_2: c3
+        },
+        success:function(data){
+            if(data.res=='success'){
+                    $("#msj-success").removeClass("hide");
+                    $("#msj-success").html(data.msg);
+                    $('#pass_edit').modal('toggle');
+            }else if(data.res=='fail'){
+                    $("#msj-fail").removeClass("hide"); 
+                    $("#msj-fail").html(data.msg);
+                    $('#pass_edit').modal('toggle');
+            } 
+        },
+        error: function (jqXHR, exception) {
+            $("#msj-fail").removeClass("hide"); 
+            $("#msj-fail").html('Volver a intentar.');
+            $('#pass_edit').modal('toggle');
+        }
+    });
 });

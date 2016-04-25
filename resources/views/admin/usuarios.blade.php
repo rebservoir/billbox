@@ -4,6 +4,7 @@
 	@include('admin.modal.user_create')
 	@include('admin.modal.user_edit')
 	@include('admin.modal.detalle_pagos')
+	@include('admin.modal.pass_edit')
 
 	@section('nav')
 		<a href="/admin/home">

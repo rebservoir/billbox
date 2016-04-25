@@ -21,15 +21,12 @@ $("#actualizar_pago").click(function(){
 
     $.get(route, function(res){
         
-        console.log("res" + res.length);
         lng = res.length;
-        console.log("lng:" + lng);
     
         id_user = res.id_user;
 
         for (index = 0; index < res.length; index++) {
             pagos[index] = res[index].id;
-            console.log( pagos[index] );
         }
 
         update();
@@ -57,11 +54,9 @@ function update(){
             data:{status: 1},
 
             success:function(){
-                console.log('yeah');
                 $("#int_div3").load(location.href+" #int_div3>*","");
             },
              error: function (jqXHR, exception) {
-                console.log('nop');
                 var obj = jQuery.parseJSON(jqXHR.responseText);
             } 
 
@@ -122,7 +117,6 @@ function registrar_pagos($cont){
         data:{id_user: id_user, date: date, amount: amount, status: status, user_name: user_name},
 
         success:function(){
-            console.log('pagos realizados');    
             $("#cuenta_pago").load(location.href+" #cuenta_pago>*","");
             //$("#mensual").load(location.href+" #mensual>*","");
 
@@ -132,7 +126,6 @@ function registrar_pagos($cont){
         },
          error: function (jqXHR, exception) {
             var obj = jQuery.parseJSON(jqXHR.responseText);
-            console.log(obj);
         } 
     });
 
@@ -152,7 +145,6 @@ function asignar_id(btn){
     hide_alert();
 
     $("#id_pass").val(btn);
-    console.log(btn);
 }
 
 $("#pass_modify").click(function(){

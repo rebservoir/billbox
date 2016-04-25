@@ -30,3 +30,8 @@
 			{!!Form::label('*Rol:')!!}
 			{!!Form::select('role', ['Residente', 'Administrador'],null,['id'=>'role1'])!!}
 		</div>
+
+		<div id="changePass" class="hide">
+			<button value='{!!Auth::user()->id!!}' OnClick='asignar_id(this.value);' class='btn btn-primary'>Modificar Contraseña</button>
+			<br><br>
+		</div>
