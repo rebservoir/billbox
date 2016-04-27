@@ -8,6 +8,8 @@ use TuFracc\Http\Requests\PagoCreateRequest;
 use TuFracc\Http\Requests\PagoUpdateRequest;
 use TuFracc\Http\Controllers\Controller;
 use TuFracc\Pagos;
+use TuFracc\Sites;
+use TuFracc\Sites_users;
 use TuFracc\Cuotas;
 use TuFracc\User;
 use Illuminate\Contracts\Auth\Guard;
@@ -17,6 +19,8 @@ use Illuminate\Routing\Route;
 use DB;
 use Mail;
 use App\Jobs\SendEmail;
+use Illuminate\Database\Eloquent;
+
 
 class PagosController extends Controller
 {
@@ -242,4 +246,158 @@ class PagosController extends Controller
             "mensaje"=>'eliminado'
             ]);
     }
-}
+
+
+    public function test(){
+        \Log::info('I was here @ ' . \Carbon\Carbon::now());
+    }
+
+    public function corte(){
+
+      //obtener la fecha actual 
+      $year = date('Y');
+      $month = date('m');
+      $day = date('d');
+      $date = $year.'-'.$month.'-'.$day;
+      $meses = array("x","Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+      
+      //Para cada sitio 
+      $id_site = 3;
+      //para cada sitio obtener usuarios y pagos (solo users, no admins)
+      $users = DB::select('select users.*, sites_users.status, sites_users.type FROM users JOIN sites_users ON sites_users.id_user = users.id AND sites_users.id_site = :id AND sites_users.role = 0', ['id' => $id_site]);
+
+      foreach ($users as $key => $user){
+        $ultimo_pago = DB::select('select date FROM pagos WHERE id_user = :id_user AND id_site = :id_site ORDER BY date desc LIMIT 1', ['id_site' => $id_site, 'id_user' => $user->id]);
+          if(!empty($ultimo_pago)){ //tiene pagos
+            foreach ($ultimo_pago as $key => $pago){
+              $fecha_pago = explode("-", $pago->date);
+                if(($fecha_pago[0] == $year) && ($fecha_pago[1] == $month)){
+                  \Log::info('user:' . $user->name . '- ya existe');
+                }else{
+                  \Log::info('user:' . $user->name . '- Crear Pago');
+                    //obtener el amount de la cuota
+                    $cuota = Cuotas::find($user->type);
+
+                      DB::table('pagos')->insert(
+                        ['id_user'    => $user->id,
+                         'date'       => $date,
+                         'status'     => 0,
+                         'amount'     => $cuota->amount,
+                         'user_name'  => $user->name, //$user->name,
+                         'id_site'    => $id_site //$id_site
+                        ]);
+
+                      $sitio = Sites::find($id_site);
+                      $concepto = $meses[intval($month)] . '-' . $year;
+                      $importe = '$'.number_format($cuota->amount, 2, '.', '00');
+                      $status = $status = '<span class="label ecxlabel-danger" style="background-color: #d9534f;display: inline;padding: .2em .6em .3em;font-weight: 600;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;font-size: 14px;">Adeudo</span>';
+                      $descuento = '$'.number_format(  0 , 2, '.', '00');
+
+                      $data =['subj'      =>  'Nuevo pago pendiente', 
+                              'user_mail' =>  $user->email,
+                              'usuario'   =>  $user->name,
+                              'site'      =>  $sitio->name,
+                              'status'    =>  $status,
+                              'fecha'     =>  $date,
+                              'name'      =>  $user->name,
+                              'address'   =>  $user->address,
+                              'concepto'  =>  $concepto,
+                              'cuota'     =>  $importe,
+                              'descuento' =>  $descuento,
+                              'importe'   =>  $importe
+                              ];
+
+                      Mail::send('emails.pago_pendiente',$data, function ($msj) use ($data) {
+                        $msj->subject($data['subj']);
+                        $msj->to($data['user_mail']);
+                      });
+                }
+            }
+          }else{ //no tiene pagos
+            \Log::info('user:' . $user->name . '- Crear pago');
+
+                  $cuota = Cuotas::find($user->type);
+
+                      DB::table('pagos')->insert(
+                        ['id_user'    => $user->id,
+                         'date'       => $date,
+                         'status'     => 0,
+                         'amount'     => $cuota->amount,
+                         'user_name'  => $user->name, //$user->name,
+                         'id_site'    => $id_site //$id_site
+                        ]);
+
+                      $sitio = Sites::find($id_site);
+                      $concepto = $meses[intval($month)] . '-' . $year;
+                      $importe = '$'.number_format($cuota->amount, 2, '.', '00');
+                      $status = $status = '<span class="label ecxlabel-danger" style="background-color: #d9534f;display: inline;padding: .2em .6em .3em;font-weight: 600;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;font-size: 14px;">Adeudo</span>';
+                      $descuento = '$'.number_format(  0 , 2, '.', '00');
+
+                      $data =['subj'      =>  'Nuevo pago pendiente', 
+                              'user_mail' =>  $user->email,
+                              'usuario'   =>  $user->name,
+                              'site'      =>  $sitio->name,
+                              'status'    =>  $status,
+                              'fecha'     =>  $date,
+                              'name'      =>  $user->name,
+                              'address'   =>  $user->address,
+                              'concepto'  =>  $concepto,
+                              'cuota'     =>  $importe,
+                              'descuento' =>  $descuento,
+                              'importe'   =>  $importe
+                              ];
+
+                      Mail::send('emails.pago_pendiente',$data, function ($msj) use ($data) {
+                        $msj->subject($data['subj']);
+                        $msj->to($data['user_mail']);
+                      });
+          }
+      } //fin foreach $user
+    } //fin Corte
+
+
+    public function limite(){
+
+      //obtener sitios
+      $sitios = DB::select('select * FROM sites');
+      //obtener usuarios por sitio
+      foreach ($sitios as $key => $sitio){
+        $users = DB::select('select users.*, sites_users.status, sites_users.type FROM users JOIN sites_users ON sites_users.id_user = users.id AND sites_users.id_site = :id AND sites_users.role = 0', ['id' => $sitio->id]);
+          
+          foreach ($users as $key => $user){
+            //obtener ultimo pago
+            $ultimo_pago = DB::select('select status FROM pagos WHERE id_user = :id_user AND id_site = :id_site ORDER BY date desc LIMIT 1', ['id_site' => $sitio->id, 'id_user' => $user->id]);
+              if(!empty($ultimo_pago)){ //tiene pagos
+                  foreach ($ultimo_pago as $key => $pago){
+                    if($pago->status == 0){
+                      //\Log::info('Sitio:' . $sitio->id . 'user:' . $user->name . '- Adeudo');
+                      DB::table('sites_users')->where('id_site', $sitio->id)->where('id_user', $user->id)->update(['status' => 0]);
+
+                      $status = '<span class="label ecxlabel-danger" style="background-color: #d9534f;display: inline;padding: .2em .6em .3em;font-weight: 600;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;font-size: 14px;">Adeudo</span>';
+
+                      $data =['subj'      =>  'Limite de pago', 
+                              'user_mail' =>  $user->email,
+                              'usuario'   =>  $user->name,
+                              'sitio'      => $sitio->name,
+                              'status'    =>  $status
+                              ];
+
+                      Mail::send('emails.limite',$data, function ($msj) use ($data) {
+                        $msj->subject($data['subj']);
+                        $msj->to('reb_189@hotmail.com');
+                      });
+
+                    }else if($pago->status == 1){
+                      //\Log::info('Sitio:' . $sitio->id . 'user:' . $user->name . '- Corriente');
+                      DB::table('sites_users')->where('id_site', $sitio->id)->where('id_user', $user->id)->update(['status' => 1]);
+                    }
+                  }
+              }else{ //no tiene pagos
+                \Log::info('Sitio:' . $sitio->id . 'user:' . $user->name . '- No pagos');
+              }
+          }
+      }
+    } //fin limite
+
+
+}//end controller

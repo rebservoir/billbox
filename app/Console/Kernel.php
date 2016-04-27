@@ -5,6 +5,7 @@ namespace TuFracc\Console;
 use DB;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use TuFracc\Http\Controllers\Controller;
 
 class Kernel extends ConsoleKernel
 {
@@ -41,7 +42,10 @@ class Kernel extends ConsoleKernel
             \Log::info('I was here @ ' . \Carbon\Carbon::now());
         })->everyMinute(); 
 */
-        $schedule->call('FrontController@checkStatus')->everyMinute(); 
+        //$schedule->call('TuFracc\Http\Controllers\FrontController@test')->everyMinute();
+        //$schedule->call('TuFracc\Http\Controllers\PagosController@corte')->everyMinute();  
+        //$schedule->call('TuFracc\Http\Controllers\PagosController@limite')->everyMinute();  
+
         
 
     }

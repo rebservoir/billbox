@@ -334,7 +334,7 @@ public function postPayment($type){
 			if(!empty($pagos_id)){
 				foreach ($pagos_id as $pago) {
 					DB::table('pagos')->where('id', $pago)->update(['status' => 1]);
-					DB::table('sites_users')->where('id_user',$this->auth->user()->id)->where('id_user', $id_site )->update(['status' => 1]);
+					DB::table('sites_users')->where('id_user',$this->auth->user()->id)->where('id_site', $id_site )->update(['status' => 1]);
 				}
 			}else if(!empty($pagos_data)){
 				
@@ -342,7 +342,7 @@ public function postPayment($type){
         		$cuota = Cuotas::find($user_type);
         		$user = User::find($this->auth->user()->id);
 
-				foreach ($pagos_data as $date) {
+				foreach ($pagos_data as $date){
 					DB::table('pagos')->insert([
 						'id_user' => $user->id,
 						'id_site' => $id_site,
@@ -352,7 +352,8 @@ public function postPayment($type){
 						'user_name' => $user->name
 						]);
 				}
-				
+
+				DB::table('sites_users')->where('id_user',$this->auth->user()->id)->where('id_site', $id_site )->update(['status' => 1]);
 			}
 				
 			return redirect()->to('micuenta')->with('message', $message);

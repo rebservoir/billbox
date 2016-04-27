@@ -373,6 +373,9 @@ class FrontController extends Controller
     }
 
 
-    
+    public function test(){
+        \Log::info('I was here @ ' . \Carbon\Carbon::now());
+    }
+
 
 } // end
