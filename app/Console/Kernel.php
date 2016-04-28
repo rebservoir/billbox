@@ -42,6 +42,7 @@ class Kernel extends ConsoleKernel
             \Log::info('I was here @ ' . \Carbon\Carbon::now());
         })->everyMinute(); 
 */
+        //$schedule->call('TuFracc\Http\Controllers\PagosController@test')->everyMinute();  
         //$schedule->call('TuFracc\Http\Controllers\FrontController@test')->everyMinute();
         //$schedule->call('TuFracc\Http\Controllers\PagosController@corte')->everyMinute();  
         //$schedule->call('TuFracc\Http\Controllers\PagosController@limite')->everyMinute();  

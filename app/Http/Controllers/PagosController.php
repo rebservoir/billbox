@@ -125,7 +125,6 @@ class PagosController extends Controller
                             $next_y = intval($ultimo_pago[0]);
                         }
 
-                        if((intval($newDate[0])==$next_y)&&(intval($newDate[1])==$next_m)){
                             DB::table('pagos')->insert(
                             [   'id_user' => $id_user,
                                 'date' => $request->date,
@@ -145,13 +144,7 @@ class PagosController extends Controller
                             return response()->json([
                                 "tipo" => 'success'
                             ]);
-                        }else{
-                            return response()->json([
-                                "tipo" => 'fail',
-                                "message" => 'No estan permitido intervalos sin pagos creados. Se debe crear un pago con fecha inmediata al ultimo creado.'
-                            ]);
-                        }
-
+                
                     }else{
                         return response()->json([
                             "tipo" => 'fail',
@@ -249,7 +242,15 @@ class PagosController extends Controller
 
 
     public function test(){
-        \Log::info('I was here @ ' . \Carbon\Carbon::now());
+        //\Log::info('I was here @ ' . \Carbon\Carbon::now());
+
+        $data = [ 'msg'=> 'Prueba', 'subj'=> 'Prueba', 'user_mail' => 'reb_189@hotmail.com'];
+
+        Mail::send('emails.msg',$data, function ($msj) use ($data) {
+            $msj->subject($data['subj']);
+            $msj->to($data['user_mail']);
+        });
+
     }
 
     public function corte(){
@@ -260,99 +261,123 @@ class PagosController extends Controller
       $day = date('d');
       $date = $year.'-'.$month.'-'.$day;
       $meses = array("x","Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-      
-      //Para cada sitio 
-      $id_site = 3;
-      //para cada sitio obtener usuarios y pagos (solo users, no admins)
-      $users = DB::select('select users.*, sites_users.status, sites_users.type FROM users JOIN sites_users ON sites_users.id_user = users.id AND sites_users.id_site = :id AND sites_users.role = 0', ['id' => $id_site]);
+      $existe = false;
+      //obtener sitios
+      $sitios = DB::select('select * FROM sites');
+      //obtener usuarios por sitio
+      foreach ($sitios as $key => $sitio){
+        //Para cada sitio 
+        $id_site = $sitio->id;
 
-      foreach ($users as $key => $user){
-        $ultimo_pago = DB::select('select date FROM pagos WHERE id_user = :id_user AND id_site = :id_site ORDER BY date desc LIMIT 1', ['id_site' => $id_site, 'id_user' => $user->id]);
-          if(!empty($ultimo_pago)){ //tiene pagos
-            foreach ($ultimo_pago as $key => $pago){
-              $fecha_pago = explode("-", $pago->date);
-                if(($fecha_pago[0] == $year) && ($fecha_pago[1] == $month)){
-                  \Log::info('user:' . $user->name . '- ya existe');
-                }else{
-                  \Log::info('user:' . $user->name . '- Crear Pago');
-                    //obtener el amount de la cuota
+        //para cada sitio obtener usuarios y pagos (solo users, no admins)
+        $users = DB::select('select users.*, sites_users.status, sites_users.type FROM users JOIN sites_users ON sites_users.id_user = users.id AND sites_users.id_site = :id AND sites_users.role = 0', ['id' => $id_site]);
+
+        foreach ($users as $key => $user){
+
+          $fechas_pagos = DB::select('select date FROM pagos WHERE id_user = :id_user AND id_site = :id_site ORDER BY date desc', ['id_site' => $id_site, 'id_user' => $user->id]);
+          $existe = false;
+            if(!empty($fechas_pagos)){ //tiene pagos
+              foreach ($fechas_pagos as $key => $fecha) {
+                $fecha_p = explode("-", $fecha->date);
+                  if(($fecha_p[0] == $year) && ($fecha_p[1] == $month)){
+                    $existe=true;
+                    break;
+                  }//end if
+              }//foreach $fechas_pagos
+
+              if($existe){//existe y no se crea
+                  //\Log::info($fecha_p[0].'='.$year.'--'.$fecha_p[1].'='.$month.'-Existe');
+                  //\Log::info('sitio:'.$sitio->name.'- user:' . $user->name . '- ya existe');
+              }else{//No existe y se crea
+
+                //\Log::info($fecha_p[0].'='.$year.'--'.$fecha_p[1].'='.$month.'-Crear pago');
+                //\Log::info('sitio:'. $sitio->name .'- user:' . $user->name . '- Crear pago');
+                      //obtener el amount de la cuota
+                      $cuota = Cuotas::find($user->type);
+
+                        
+                        DB::table('pagos')->insert(
+                          ['id_user'    => $user->id,
+                           'date'       => $date,
+                           'status'     => 0,
+                           'amount'     => $cuota->amount,
+                           'user_name'  => $user->name, //$user->name,
+                           'id_site'    => $id_site //$id_site
+                          ]);
+                        
+  
+                        $sitio = Sites::find($id_site);
+                        $concepto = $meses[intval($month)] . '-' . $year;
+                        $importe = '$'.number_format($cuota->amount, 2, '.', '00');
+                        $status = $status = '<span class="label ecxlabel-danger" style="background-color: #d9534f;display: inline;padding: .2em .6em .3em;font-weight: 600;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;font-size: 14px;">Adeudo</span>';
+                        $descuento = '$'.number_format(  0 , 2, '.', '00');
+
+                        $data =['subj'      =>  'Nuevo pago pendiente', 
+                                'user_mail' =>  $user->email,
+                                'usuario'   =>  $user->name,
+                                'site'      =>  $sitio->name,
+                                'status'    =>  $status,
+                                'fecha'     =>  $date,
+                                'name'      =>  $user->name,
+                                'address'   =>  $user->address,
+                                'concepto'  =>  $concepto,
+                                'cuota'     =>  $importe,
+                                'descuento' =>  $descuento,
+                                'importe'   =>  $importe
+                                ];
+
+                        
+                        Mail::send('emails.pago_pendiente',$data, function ($msj) use ($data) {
+                          $msj->subject($data['subj']);
+                          $msj->to($data['user_mail']);
+                        });
+                        
+              }
+            }else{ //no tiene pagos
+              \Log::info($fecha_p[0].'='.$year.'--'.$fecha_p[1].'='.$month.'- Crear pago');
+              //\Log::info('sitio:'. $sitio->name .'- user:' . $user->name . '- Crear pago');
+
                     $cuota = Cuotas::find($user->type);
 
-                      DB::table('pagos')->insert(
-                        ['id_user'    => $user->id,
-                         'date'       => $date,
-                         'status'     => 0,
-                         'amount'     => $cuota->amount,
-                         'user_name'  => $user->name, //$user->name,
-                         'id_site'    => $id_site //$id_site
-                        ]);
+                        
+                        DB::table('pagos')->insert(
+                          ['id_user'    => $user->id,
+                           'date'       => $date,
+                           'status'     => 0,
+                           'amount'     => $cuota->amount,
+                           'user_name'  => $user->name, //$user->name,
+                           'id_site'    => $id_site //$id_site
+                          ]);
+                        
 
-                      $sitio = Sites::find($id_site);
-                      $concepto = $meses[intval($month)] . '-' . $year;
-                      $importe = '$'.number_format($cuota->amount, 2, '.', '00');
-                      $status = $status = '<span class="label ecxlabel-danger" style="background-color: #d9534f;display: inline;padding: .2em .6em .3em;font-weight: 600;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;font-size: 14px;">Adeudo</span>';
-                      $descuento = '$'.number_format(  0 , 2, '.', '00');
+                        $sitio = Sites::find($id_site);
+                        $concepto = $meses[intval($month)] . '-' . $year;
+                        $importe = '$'.number_format($cuota->amount, 2, '.', '00');
+                        $status = $status = '<span class="label ecxlabel-danger" style="background-color: #d9534f;display: inline;padding: .2em .6em .3em;font-weight: 600;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;font-size: 14px;">Adeudo</span>';
+                        $descuento = '$'.number_format(  0 , 2, '.', '00');
 
-                      $data =['subj'      =>  'Nuevo pago pendiente', 
-                              'user_mail' =>  $user->email,
-                              'usuario'   =>  $user->name,
-                              'site'      =>  $sitio->name,
-                              'status'    =>  $status,
-                              'fecha'     =>  $date,
-                              'name'      =>  $user->name,
-                              'address'   =>  $user->address,
-                              'concepto'  =>  $concepto,
-                              'cuota'     =>  $importe,
-                              'descuento' =>  $descuento,
-                              'importe'   =>  $importe
-                              ];
-
-                      Mail::send('emails.pago_pendiente',$data, function ($msj) use ($data) {
-                        $msj->subject($data['subj']);
-                        $msj->to($data['user_mail']);
-                      });
-                }
+                        $data =['subj'      =>  'Nuevo pago pendiente', 
+                                'user_mail' =>  $user->email,
+                                'usuario'   =>  $user->name,
+                                'site'      =>  $sitio->name,
+                                'status'    =>  $status,
+                                'fecha'     =>  $date,
+                                'name'      =>  $user->name,
+                                'address'   =>  $user->address,
+                                'concepto'  =>  $concepto,
+                                'cuota'     =>  $importe,
+                                'descuento' =>  $descuento,
+                                'importe'   =>  $importe
+                                ];
+                           
+                        Mail::send('emails.pago_pendiente',$data, function ($msj) use ($data) {
+                          $msj->subject($data['subj']);
+                          $msj->to($data['user_mail']);
+                        });
+                    
             }
-          }else{ //no tiene pagos
-            \Log::info('user:' . $user->name . '- Crear pago');
-
-                  $cuota = Cuotas::find($user->type);
-
-                      DB::table('pagos')->insert(
-                        ['id_user'    => $user->id,
-                         'date'       => $date,
-                         'status'     => 0,
-                         'amount'     => $cuota->amount,
-                         'user_name'  => $user->name, //$user->name,
-                         'id_site'    => $id_site //$id_site
-                        ]);
-
-                      $sitio = Sites::find($id_site);
-                      $concepto = $meses[intval($month)] . '-' . $year;
-                      $importe = '$'.number_format($cuota->amount, 2, '.', '00');
-                      $status = $status = '<span class="label ecxlabel-danger" style="background-color: #d9534f;display: inline;padding: .2em .6em .3em;font-weight: 600;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;font-size: 14px;">Adeudo</span>';
-                      $descuento = '$'.number_format(  0 , 2, '.', '00');
-
-                      $data =['subj'      =>  'Nuevo pago pendiente', 
-                              'user_mail' =>  $user->email,
-                              'usuario'   =>  $user->name,
-                              'site'      =>  $sitio->name,
-                              'status'    =>  $status,
-                              'fecha'     =>  $date,
-                              'name'      =>  $user->name,
-                              'address'   =>  $user->address,
-                              'concepto'  =>  $concepto,
-                              'cuota'     =>  $importe,
-                              'descuento' =>  $descuento,
-                              'importe'   =>  $importe
-                              ];
-
-                      Mail::send('emails.pago_pendiente',$data, function ($msj) use ($data) {
-                        $msj->subject($data['subj']);
-                        $msj->to($data['user_mail']);
-                      });
-          }
-      } //fin foreach $user
+        } //fin foreach $user
+      }//end foreach sitio
     } //fin Corte
 
 
@@ -381,11 +406,12 @@ class PagosController extends Controller
                               'sitio'      => $sitio->name,
                               'status'    =>  $status
                               ];
-
+    
                       Mail::send('emails.limite',$data, function ($msj) use ($data) {
                         $msj->subject($data['subj']);
-                        $msj->to('reb_189@hotmail.com');
+                        $msj->to($data['user_mail']);
                       });
+                    
 
                     }else if($pago->status == 1){
                       //\Log::info('Sitio:' . $sitio->id . 'user:' . $user->name . '- Corriente');
@@ -393,7 +419,7 @@ class PagosController extends Controller
                     }
                   }
               }else{ //no tiene pagos
-                \Log::info('Sitio:' . $sitio->id . 'user:' . $user->name . '- No pagos');
+                //\Log::info('Sitio:' . $sitio->id . 'user:' . $user->name . '- No pagos');
               }
           }
       }

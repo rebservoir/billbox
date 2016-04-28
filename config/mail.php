@@ -30,7 +30,7 @@ return [
     |
     */
 
-    'host' => env('MAIL_HOST', 'smtp.gmail.com'),
+    'host' => env('MAIL_HOST', 'smtp.zoho.com'),
 
     /*
     |--------------------------------------------------------------------------
@@ -56,7 +56,7 @@ return [
     |
     */
 
-    'from' => ['address' => 'tufracc@gmail.com', 'name' => 'Tu Fraccionamiento'],
+    'from' => ['address' => 'noreply@billbox.mx', 'name' => 'Bill Box'],
 
     /*
     |--------------------------------------------------------------------------
@@ -82,7 +82,8 @@ return [
     |
     */
 
-    'username' => env('MAIL_USERNAME'),
+    //'username' => env('MAIL_USERNAME'),
+    'username' => env('noreply@billbox.mx'),
 
     /*
     |--------------------------------------------------------------------------
@@ -95,7 +96,8 @@ return [
     |
     */
 
-    'password' => env('MAIL_PASSWORD'),
+    //'password' => env('MAIL_PASSWORD'),
+    'password' => env('YTwmv8fG'),
 
     /*
     |--------------------------------------------------------------------------
